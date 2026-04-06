@@ -1,8 +1,9 @@
-import { useSupabaseAdmin, getAuthenticatedUser } from '../../lib/supabase'
+import { serverSupabaseUser } from '#supabase/server'
+import { useSupabaseAdmin } from '../../lib/supabase'
 
 // POST /api/tenants — create a new tenant (called during onboarding)
 export default defineEventHandler(async (event) => {
-  const user = await getAuthenticatedUser(event)
+  const user = await serverSupabaseUser(event)
   if (!user) throw createError({ statusCode: 401, message: 'Unauthorized' })
 
   const body = await readBody<{ name: string; slug: string; notification_email?: string; timezone?: string }>(event)

@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import AppCard from '~/components/ui/AppCard.vue'
+import AppInput from '~/components/ui/AppInput.vue'
+import AppButton from '~/components/ui/AppButton.vue'
 definePageMeta({ layout: 'auth' })
 
 const { signIn } = useAuth()

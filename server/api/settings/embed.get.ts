@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
 
   const { data } = await db
     .from('tenant_settings')
-    .select('embed_primary_color, embed_button_text, embed_heading, embed_subheading')
+    .select('embed_primary_color, embed_button_text, embed_heading, embed_subheading, requested_service_placeholder, embed_border_radius, embed_font_family, embed_background_color, embed_text_color, embed_label_color, embed_input_border_color')
     .eq('tenant_id', tenantId)
     .single()
 

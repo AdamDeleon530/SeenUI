@@ -58,8 +58,8 @@ export async function validateTenantAccess(userId: string, tenantId: string): Pr
  * Use at the top of protected API route handlers.
  */
 export async function requireTenantContext(event: any): Promise<{ userId: string; tenantId: string }> {
-  const { getAuthenticatedUser } = await import('../lib/supabase')
-  const user = await getAuthenticatedUser(event)
+  const { serverSupabaseUser } = await import('#supabase/server')
+  const user = await serverSupabaseUser(event)
   if (!user) throw createError({ statusCode: 401, message: 'Unauthorized' })
 
   const tenantId = await resolveTenantFromUser(user.id)

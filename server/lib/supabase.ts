@@ -7,10 +7,10 @@ import { createClient } from '@supabase/supabase-js'
 export function useSupabaseAdmin() {
   const config = useRuntimeConfig()
   const url = config.public.supabaseUrl
-  const key = config.public.supabaseKey
+  const key = config.supabaseServiceKey
 
   if (!url || !key) {
-    throw new Error('Missing SUPABASE_URL or SUPABASE_KEY in environment')
+    throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_KEY in environment')
   }
 
   return createClient(url, key, {

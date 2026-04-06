@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import AppCard from '~/components/ui/AppCard.vue'
+import AppInput from '~/components/ui/AppInput.vue'
+import AppSelect from '~/components/ui/AppSelect.vue'
+import AppButton from '~/components/ui/AppButton.vue'
+
 definePageMeta({ middleware: ['auth', 'tenant'] })
 
 const tenantStore = useTenantStore()
@@ -59,6 +64,7 @@ const timezones = [
         v-for="tab in [
           { label: 'General',  href: '/settings' },
           { label: 'Embed',    href: '/settings/embed' },
+          { label: 'Services', href: '/settings/services' },
           { label: 'Team',     href: '/settings/team' },
         ]"
         :key="tab.href"

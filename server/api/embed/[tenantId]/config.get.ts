@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
   const [tenantRes, settingsRes, servicesRes] = await Promise.all([
     db.from('tenants').select('id, name, logo_url, status').eq('id', tenantId).single(),
     db.from('tenant_settings').select(
-      'embed_primary_color, embed_button_text, embed_heading, embed_subheading, booking_form_fields'
+      'embed_primary_color, embed_button_text, embed_heading, embed_subheading, booking_form_fields, requested_service_placeholder, embed_border_radius, embed_font_family, embed_background_color, embed_text_color, embed_label_color, embed_input_border_color'
     ).eq('tenant_id', tenantId).single(),
     db.from('services').select('id, name, duration_minutes')
       .eq('tenant_id', tenantId).eq('is_active', true)
@@ -38,6 +38,13 @@ export default defineEventHandler(async (event) => {
       heading: settingsRes.data?.embed_heading ?? 'Request an Appointment',
       subheading: settingsRes.data?.embed_subheading ?? null,
       form_fields: settingsRes.data?.booking_form_fields ?? [],
+      requested_service_placeholder: settingsRes.data?.requested_service_placeholder ?? 'e.g. Botox, Facial...',
+      border_radius: settingsRes.data?.embed_border_radius ?? 10,
+      font_family: settingsRes.data?.embed_font_family ?? 'Inter',
+      background_color: settingsRes.data?.embed_background_color ?? '#ffffff',
+      text_color: settingsRes.data?.embed_text_color ?? '#111827',
+      label_color: settingsRes.data?.embed_label_color ?? '#374151',
+      input_border_color: settingsRes.data?.embed_input_border_color ?? '#d1d5db',
     },
     services: servicesRes.data ?? [],
   }

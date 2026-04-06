@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import AppCard from '~/components/ui/AppCard.vue'
+import AppBadge from '~/components/ui/AppBadge.vue'
+import AppButton from '~/components/ui/AppButton.vue'
+
 definePageMeta({ middleware: ['auth', 'tenant'] })
 
 const authStore = useAuthStore()

@@ -16,6 +16,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     // Private (server-side only)
+    supabaseServiceKey: process.env.SUPABASE_SERVICE_KEY,
     resendApiKey: process.env.RESEND_API_KEY,
     emailFrom: process.env.EMAIL_FROM || "noreply@localbookingengine.com",
     appUrl: process.env.APP_URL || "http://localhost:3000",

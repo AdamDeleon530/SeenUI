@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import AppCard from '~/components/ui/AppCard.vue'
+import AppButton from '~/components/ui/AppButton.vue'
+import AppBadge from '~/components/ui/AppBadge.vue'
+
 definePageMeta({ middleware: ['auth', 'tenant'] })
 
 // SCAFFOLD: Team management page — UI shown but invite API is a future feature.
@@ -48,6 +52,7 @@ const roleLabel: Record<string, string> = {
         v-for="tab in [
           { label: 'General',  href: '/settings' },
           { label: 'Embed',    href: '/settings/embed' },
+          { label: 'Services', href: '/settings/services' },
           { label: 'Team',     href: '/settings/team' },
         ]"
         :key="tab.href"

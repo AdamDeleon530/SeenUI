@@ -90,36 +90,42 @@
   }
 
   // ─── CSS ───────────────────────────────────────────────────────────────────
-  function buildCSS(primaryColor) {
+  function buildCSS(embed) {
+    var primary   = embed.primary_color      || '#6172f3';
+    var bg        = embed.background_color   || '#ffffff';
+    var textColor = embed.text_color         || '#111827';
+    var labelColor= embed.label_color        || '#374151';
+    var border    = embed.input_border_color || '#d1d5db';
+    var radius    = (embed.border_radius !== undefined ? embed.border_radius : 10) + 'px';
+    var font      = embed.font_family        || 'Inter';
+    var fontStack = font + ', system-ui, sans-serif';
     return [
-      ':host { font-family: Inter, system-ui, sans-serif; box-sizing: border-box; }',
+      ':host { font-family: ' + fontStack + '; box-sizing: border-box; }',
       '*, *::before, *::after { box-sizing: inherit; }',
-      '.lbe-widget { max-width: 480px; background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 4px 24px rgba(0,0,0,0.1); }',
-      '.lbe-heading { font-size: 18px; font-weight: 700; color: #111827; margin: 0 0 4px; }',
+      '.lbe-widget { max-width: 480px; background: ' + bg + '; border-radius: calc(' + radius + ' + 6px); padding: 24px; box-shadow: 0 4px 24px rgba(0,0,0,0.1); }',
+      '.lbe-heading { font-size: 18px; font-weight: 700; color: ' + textColor + '; margin: 0 0 4px; }',
       '.lbe-subheading { font-size: 14px; color: #6b7280; margin: 0 0 20px; }',
       '.lbe-field { margin-bottom: 14px; }',
-      '.lbe-label { display: block; font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 5px; }',
+      '.lbe-label { display: block; font-size: 13px; font-weight: 500; color: ' + labelColor + '; margin-bottom: 5px; }',
       '.lbe-required { color: #ef4444; margin-left: 2px; }',
-      '.lbe-input, .lbe-textarea, .lbe-select { width: 100%; padding: 9px 12px; font-size: 14px; border: 1.5px solid #d1d5db; border-radius: 10px; outline: none; transition: border-color 0.15s; font-family: inherit; }',
-      '.lbe-input:focus, .lbe-textarea:focus, .lbe-select:focus { border-color: ' + primaryColor + '; box-shadow: 0 0 0 3px ' + primaryColor + '33; }',
+      '.lbe-input, .lbe-textarea, .lbe-select { width: 100%; padding: 9px 12px; font-size: 14px; border: 1.5px solid ' + border + '; border-radius: ' + radius + '; outline: none; transition: border-color 0.15s; font-family: inherit; background: ' + bg + '; color: ' + textColor + '; }',
+      '.lbe-input:focus, .lbe-textarea:focus, .lbe-select:focus { border-color: ' + primary + '; box-shadow: 0 0 0 3px ' + primary + '33; }',
       '.lbe-textarea { resize: none; }',
       '.lbe-input.error, .lbe-textarea.error { border-color: #ef4444; }',
       '.lbe-error-text { font-size: 12px; color: #ef4444; margin-top: 4px; display: none; }',
       '.lbe-error-text.visible { display: block; }',
-      '.lbe-submit { width: 100%; padding: 12px; font-size: 15px; font-weight: 600; color: #fff; background: ' + primaryColor + '; border: none; border-radius: 10px; cursor: pointer; transition: opacity 0.15s, transform 0.1s; margin-top: 4px; font-family: inherit; }',
+      '.lbe-submit { width: 100%; padding: 12px; font-size: 15px; font-weight: 600; color: #fff; background: ' + primary + '; border: none; border-radius: ' + radius + '; cursor: pointer; transition: opacity 0.15s, transform 0.1s; margin-top: 4px; font-family: inherit; }',
       '.lbe-submit:hover { opacity: 0.9; }',
       '.lbe-submit:active { transform: scale(0.99); }',
       '.lbe-submit:disabled { opacity: 0.6; cursor: not-allowed; }',
       '.lbe-success { text-align: center; padding: 24px 0; }',
       '.lbe-success-icon { font-size: 40px; margin-bottom: 12px; }',
-      '.lbe-success-title { font-size: 18px; font-weight: 700; color: #111827; margin: 0 0 6px; }',
+      '.lbe-success-title { font-size: 18px; font-weight: 700; color: ' + textColor + '; margin: 0 0 6px; }',
       '.lbe-success-msg { font-size: 14px; color: #6b7280; margin: 0; }',
-      '.lbe-server-error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; font-size: 13px; padding: 10px 12px; border-radius: 8px; margin-bottom: 12px; display: none; }',
+      '.lbe-server-error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; font-size: 13px; padding: 10px 12px; border-radius: ' + radius + '; margin-bottom: 12px; display: none; }',
       '.lbe-server-error.visible { display: block; }',
-      // Floating button
-      '.lbe-floating-btn { position: fixed; bottom: 24px; right: 24px; padding: 14px 20px; font-size: 15px; font-weight: 600; color: #fff; background: ' + primaryColor + '; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.2); z-index: 99998; font-family: inherit; transition: transform 0.2s, box-shadow 0.2s; }',
+      '.lbe-floating-btn { position: fixed; bottom: 24px; right: 24px; padding: 14px 20px; font-size: 15px; font-weight: 600; color: #fff; background: ' + primary + '; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.2); z-index: 99998; font-family: inherit; transition: transform 0.2s, box-shadow 0.2s; }',
       '.lbe-floating-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.25); }',
-      // Modal overlay
       '.lbe-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 16px; }',
       '.lbe-modal { position: relative; width: 100%; max-width: 480px; }',
       '.lbe-modal-close { position: absolute; top: -12px; right: -12px; width: 28px; height: 28px; background: #fff; border: none; border-radius: 50%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15); z-index: 1; }',
@@ -155,7 +161,7 @@
       }
       html += '</select></div>';
     } else {
-      html += field('text', 'requested_service', 'Requested Service', 'e.g. Botox, Facial...', false);
+      html += field('text', 'requested_service', 'Requested Service', embed.requested_service_placeholder || 'e.g. Botox, Facial...', false);
     }
 
     html += field('date', 'preferred_date', 'Preferred Date', '', false);
@@ -192,7 +198,7 @@
 
     // Build inner DOM
     var style = document.createElement('style');
-    style.textContent = buildCSS(config.embed.primary_color);
+    style.textContent = buildCSS(config.embed);
 
     var wrapper = document.createElement('div');
     wrapper.className = 'lbe-widget';

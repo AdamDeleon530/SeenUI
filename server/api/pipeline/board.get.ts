@@ -20,9 +20,8 @@ export default defineEventHandler(async (event) => {
     .from('leads')
     .select(`
       id, full_name, email, phone, requested_service, preferred_date,
-      status, stage_id, source, created_at, updated_at,
-      tags:lead_tags(tag:tags(id, name, color)),
-      assigned_user:assigned_to(id, full_name)
+      status, stage_id, source, assigned_to, created_at, updated_at,
+      tags:lead_tags(tag:tags(id, name, color))
     `)
     .eq('tenant_id', tenantId)
     .eq('is_archived', false)

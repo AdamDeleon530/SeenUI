@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import type { Lead } from '~/types/lead'
+import KanbanColumn from '~/components/pipeline/KanbanColumn.vue'
+import LeadDrawer from '~/components/leads/LeadDrawer.vue'
+import AddLeadModal from '~/components/forms/AddLeadModal.vue'
+import AppButton from '~/components/ui/AppButton.vue'
 
 definePageMeta({ middleware: ['auth', 'tenant'] })
 

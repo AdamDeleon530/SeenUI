@@ -1,8 +1,9 @@
-import { useSupabaseAdmin, getAuthenticatedUser } from '../../lib/supabase'
+import { serverSupabaseUser } from '#supabase/server'
+import { useSupabaseAdmin } from '../../lib/supabase'
 
 // GET /api/agency/tenants — list tenants managed by the current agency
 export default defineEventHandler(async (event) => {
-  const user = await getAuthenticatedUser(event)
+  const user = await serverSupabaseUser(event)
   if (!user) throw createError({ statusCode: 401, message: 'Unauthorized' })
 
   const db = useSupabaseAdmin()
