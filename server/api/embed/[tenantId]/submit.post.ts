@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
   // Verify tenant is active + fetch email sending config
   const { data: tenant } = await db
     .from('tenants')
-    .select('id, name, notification_email, status, plan, subscription_status, trial_ends_at')
+    .select('id, name, notification_email, status, plan, subscription_status, trial_ends_at, is_billing_exempt')
     .eq('id', tenantId)
     .single()
 
@@ -51,25 +51,26 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, message: 'Not found' })
   }
 
-  // Plan enforcement: check if trial expired or subscription canceled
-  const plan = tenant.plan ?? 'trial'
-  const subStatus = tenant.subscription_status ?? 'trialing'
-  const trialExpired = plan === 'trial' && tenant.trial_ends_at && new Date(tenant.trial_ends_at) < new Date()
-  if (trialExpired || subStatus === 'canceled') {
-    throw createError({ statusCode: 402, message: 'Subscription required to accept bookings.' })
-  }
+  // Plan enforcement (skipped for exempt accounts)
+  if (!tenant.is_billing_exempt) {
+    const plan = tenant.plan ?? 'trial'
+    const subStatus = tenant.subscription_status ?? 'trialing'
+    const trialExpired = plan === 'trial' && tenant.trial_ends_at && new Date(tenant.trial_ends_at) < new Date()
+    if (trialExpired || subStatus === 'canceled') {
+      throw createError({ statusCode: 402, message: 'Subscription required to accept bookings.' })
+    }
 
-  // Check monthly lead limit
-  const limits = PLAN_LIMITS[plan]
-  if (limits.leads_per_month !== Infinity) {
-    const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0)
-    const { count } = await db
-      .from('leads')
-      .select('*', { count: 'exact', head: true })
-      .eq('tenant_id', tenantId)
-      .gte('created_at', monthStart.toISOString())
-    if ((count ?? 0) >= limits.leads_per_month) {
-      throw createError({ statusCode: 429, message: 'Monthly lead limit reached. Please upgrade your plan.' })
+    const limits = PLAN_LIMITS[plan]
+    if (limits.leads_per_month !== Infinity) {
+      const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0)
+      const { count } = await db
+        .from('leads')
+        .select('*', { count: 'exact', head: true })
+        .eq('tenant_id', tenantId)
+        .gte('created_at', monthStart.toISOString())
+      if ((count ?? 0) >= limits.leads_per_month) {
+        throw createError({ statusCode: 429, message: 'Monthly lead limit reached. Please upgrade your plan.' })
+      }
     }
   }
 

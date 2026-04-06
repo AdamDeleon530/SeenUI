@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
 
   const { data } = await db
     .from('tenants')
-    .select('plan, plan_interval, subscription_status, trial_ends_at, current_period_ends_at, stripe_subscription_id')
+    .select('plan, plan_interval, subscription_status, trial_ends_at, current_period_ends_at, stripe_subscription_id, is_billing_exempt')
     .eq('id', tenantId)
     .single()
 
@@ -40,5 +40,6 @@ export default defineEventHandler(async (event) => {
     days_left_in_trial:     daysLeftInTrial,
     leads_this_month:       leadsThisMonth ?? 0,
     leads_limit:            limits.leads_per_month === Infinity ? null : limits.leads_per_month,
+    is_billing_exempt:      data?.is_billing_exempt ?? false,
   }
 })

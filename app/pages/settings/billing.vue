@@ -184,6 +184,11 @@ const planLabel: Record<string, string> = {
               {{ status.days_left_in_trial }} days left in your free trial
             </p>
 
+            <!-- Exempt badge -->
+            <p v-if="(status as any).is_billing_exempt" class="text-xs text-purple-700 bg-purple-100 border border-purple-200 rounded-full px-2.5 py-0.5 mt-2 inline-block font-semibold">
+              Internal account — billing exempt
+            </p>
+
             <!-- Renewal date -->
             <p v-else-if="status.current_period_ends_at" class="text-sm text-surface-500 mt-1">
               {{ status.subscription_status === 'canceled' ? 'Access until' : 'Renews' }}
