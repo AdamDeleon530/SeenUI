@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import KanbanCard from '~/components/pipeline/KanbanCard.vue'
 import type { PipelineStage } from '~/types/pipeline'
 import type { Lead } from '~/types/lead'
 
