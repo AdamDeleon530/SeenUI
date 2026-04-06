@@ -279,14 +279,27 @@
     if (modalOpen) return;
     modalOpen = true;
 
+    var primary = config.embed.primary_color || '#6172f3';
+
     modalEl = document.createElement('div');
-    modalEl.className = 'lbe-overlay';
+    modalEl.setAttribute('style', [
+      'position:fixed', 'inset:0', 'background:rgba(0,0,0,0.45)',
+      'backdrop-filter:blur(4px)', '-webkit-backdrop-filter:blur(4px)',
+      'z-index:99999', 'display:flex', 'align-items:center',
+      'justify-content:center', 'padding:16px',
+    ].join(';'));
 
     var inner = document.createElement('div');
-    inner.className = 'lbe-modal';
+    inner.setAttribute('style', 'position:relative;width:100%;max-width:480px;');
 
     var closeBtn = document.createElement('button');
-    closeBtn.className = 'lbe-modal-close';
+    closeBtn.setAttribute('style', [
+      'position:absolute', 'top:-12px', 'right:-12px',
+      'width:28px', 'height:28px', 'background:#fff', 'border:none',
+      'border-radius:50%', 'cursor:pointer', 'font-size:18px', 'line-height:1',
+      'display:flex', 'align-items:center', 'justify-content:center',
+      'box-shadow:0 2px 8px rgba(0,0,0,0.15)', 'z-index:1', 'color:#374151',
+    ].join(';'));
     closeBtn.setAttribute('aria-label', 'Close');
     closeBtn.textContent = '×';
     closeBtn.addEventListener('click', closeModal);
@@ -342,9 +355,19 @@
         fetchConfig(ftId, function (err, config) {
           if (err) { console.error('[LBE]', err.message); return; }
           var btn = document.createElement('button');
-          btn.className = 'lbe-floating-btn';
-          btn.style.background = config.embed.primary_color;
+          var fp = config.embed.primary_color || '#6172f3';
+          var ff = (config.embed.font_family || 'Inter') + ', system-ui, sans-serif';
+          btn.setAttribute('style', [
+            'position:fixed', 'bottom:24px', 'right:24px',
+            'padding:14px 20px', 'font-size:15px', 'font-weight:600',
+            'color:#fff', 'background:' + fp, 'border:none',
+            'border-radius:50px', 'cursor:pointer',
+            'box-shadow:0 4px 16px rgba(0,0,0,0.2)', 'z-index:99998',
+            'font-family:' + ff, 'transition:transform 0.2s,box-shadow 0.2s',
+          ].join(';'));
           btn.textContent = config.embed.button_text;
+          btn.addEventListener('mouseover', function () { btn.style.transform = 'translateY(-2px)'; });
+          btn.addEventListener('mouseout',  function () { btn.style.transform = ''; });
           btn.addEventListener('click', function () { openModal(ftId, config); });
           document.body.appendChild(btn);
         });
