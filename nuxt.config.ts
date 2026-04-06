@@ -20,6 +20,16 @@ export default defineNuxtConfig({
     resendApiKey: process.env.RESEND_API_KEY,
     emailFrom: process.env.EMAIL_FROM || "noreply@localbookingengine.com",
     appUrl: process.env.APP_URL || "http://localhost:3000",
+    stripeSecretKey: process.env.STRIPE_SECRET_KEY,
+    stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+    stripePrices: {
+      starter_monthly: process.env.STRIPE_PRICE_STARTER_MONTHLY,
+      starter_annual:  process.env.STRIPE_PRICE_STARTER_ANNUAL,
+      pro_monthly:     process.env.STRIPE_PRICE_PRO_MONTHLY,
+      pro_annual:      process.env.STRIPE_PRICE_PRO_ANNUAL,
+      agency_monthly:  process.env.STRIPE_PRICE_AGENCY_MONTHLY,
+      agency_annual:   process.env.STRIPE_PRICE_AGENCY_ANNUAL,
+    },
 
     // Public (exposed to client)
     public: {

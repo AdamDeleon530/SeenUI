@@ -115,6 +115,7 @@ const hasDomain = computed(() => !!settings.value?.resend_domain_id)
           { label: 'Services', href: '/settings/services' },
           { label: 'Email',    href: '/settings/email' },
           { label: 'Templates', href: '/settings/templates' },
+          { label: 'Billing',   href: '/settings/billing' },
           { label: 'Team',     href: '/settings/team' },
         ]"
         :key="tab.href"

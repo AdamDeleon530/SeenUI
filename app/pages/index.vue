@@ -110,6 +110,7 @@ const iconMap: Record<string, string> = {
         <div class="hidden md:flex items-center gap-7">
           <a href="#features"  class="text-sm text-surface-500 hover:text-surface-900 transition-colors cursor-pointer font-medium">Features</a>
           <a href="#how"       class="text-sm text-surface-500 hover:text-surface-900 transition-colors cursor-pointer font-medium">How It Works</a>
+          <NuxtLink to="/pricing" class="text-sm text-surface-500 hover:text-surface-900 transition-colors cursor-pointer font-medium">Pricing</NuxtLink>
           <a href="#faq"       class="text-sm text-surface-500 hover:text-surface-900 transition-colors cursor-pointer font-medium">FAQ</a>
         </div>
         <div class="flex items-center gap-3">
