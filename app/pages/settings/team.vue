@@ -54,6 +54,7 @@ const roleLabel: Record<string, string> = {
           { label: 'Embed',    href: '/settings/embed' },
           { label: 'Services', href: '/settings/services' },
           { label: 'Email',    href: '/settings/email' },
+          { label: 'Templates', href: '/settings/templates' },
           { label: 'Team',     href: '/settings/team' },
         ]"
         :key="tab.href"
