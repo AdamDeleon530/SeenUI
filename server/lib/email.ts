@@ -1,0 +1,79 @@
+/**
+ * Email abstraction layer.
+ *
+ * Provider: Resend (simple REST API, generous free tier, great DX).
+ * The interface is provider-agnostic — swap the send() impl to use
+ * SendGrid, Postmark, etc. without changing call sites.
+ *
+ * SCAFFOLD: The provider integration is real but requires RESEND_API_KEY.
+ * Without it, emails are logged to console in development.
+ */
+
+import type { EmailPayload } from '~~/app/types/email'
+
+export async function sendEmail(payload: EmailPayload): Promise<{ id?: string; error?: string }> {
+  const config = useRuntimeConfig()
+  const apiKey = config.resendApiKey
+
+  // Dev fallback: log to console if no API key configured
+  if (!apiKey) {
+    console.log('[EMAIL] No RESEND_API_KEY configured. Would have sent:')
+    console.log(`  To: ${payload.to}`)
+    console.log(`  Subject: ${payload.subject}`)
+    return { id: 'dev-mock' }
+  }
+
+  try {
+    const response = await $fetch<{ id: string }>('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: {
+        from: config.emailFrom,
+        to: [payload.to],
+        subject: payload.subject,
+        html: payload.html,
+        text: payload.text,
+        reply_to: payload.replyTo,
+      },
+    })
+    return { id: response.id }
+  } catch (err: any) {
+    console.error('[EMAIL] Send failed:', err.message)
+    return { error: err.message }
+  }
+}
+
+/**
+ * Interpolates template variables into email content.
+ * Variables use {{variable_name}} syntax.
+ */
+export function interpolateTemplate(template: string, vars: Record<string, string | null | undefined>): string {
+  return template.replace(/\{\{(\w+)\}\}/g, (_, key) => vars[key] ?? '')
+}
+
+/**
+ * Builds template variables for a lead.
+ */
+export function buildLeadEmailVars(lead: {
+  full_name: string
+  email: string
+  phone?: string | null
+  requested_service?: string | null
+  preferred_date?: string | null
+}, tenantName: string, appUrl: string, leadId?: string): Record<string, string | null | undefined> {
+  const firstName = lead.full_name.split(' ')[0]
+  return {
+    first_name: firstName,
+    lead_name: lead.full_name,
+    lead_email: lead.email,
+    lead_phone: lead.phone ?? 'Not provided',
+    requested_service: lead.requested_service ?? 'Not specified',
+    preferred_date: lead.preferred_date ?? 'Flexible',
+    business_name: tenantName,
+    lead_url: leadId ? `${appUrl}/leads/${leadId}` : appUrl,
+    review_url: '', // Populated per-tenant via settings in the future
+  }
+}
