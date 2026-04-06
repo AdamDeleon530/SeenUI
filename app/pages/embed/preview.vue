@@ -77,7 +77,13 @@ useHead({
         <div class="field"><label>Email Address <span class="req">*</span></label><input type="email" placeholder="jane@example.com" readonly /></div>
         <div class="field"><label>Phone Number</label><input type="tel" placeholder="+1 (555) 000-0000" readonly /></div>
         <div class="field"><label>Requested Service</label><input type="text" :placeholder="placeholder" readonly /></div>
-        <div class="field"><label>Preferred Date</label><input type="date" readonly /></div>
+        <div class="field">
+          <label>Preferred Date</label>
+          <div :style="{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'8px 11px', fontSize:'13px', border:`1.5px solid ${borderColor}`, borderRadius:radiusPx, color:'#9ca3af', background:bg, fontFamily:fontStack }">
+            <span>Select a date...</span>
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+        </div>
         <div class="field"><label>Additional Notes</label><textarea rows="2" placeholder="Anything else we should know?" readonly /></div>
         <button class="submit-btn">{{ buttonText }}</button>
       </div>
