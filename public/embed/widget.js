@@ -151,7 +151,7 @@
       '.lbe-date-display { width: 100%; padding: 9px 38px 9px 12px; font-size: 14px; border: 1.5px solid ' + border + '; border-radius: ' + radius + '; outline: none; cursor: pointer; font-family: inherit; background: ' + bg + '; color: ' + textColor + '; text-align: left; transition: border-color 0.15s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.lbe-date-display:focus, .lbe-date-display.open { border-color: ' + primary + '; box-shadow: 0 0 0 3px ' + primary + '33; }',
       '.lbe-date-display.error { border-color: #ef4444; }',
-      '.lbe-date-icon { position: absolute; right: 11px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #9ca3af; }',
+      '.lbe-date-icon { position: absolute; right: 11px; top: 50%; transform: translateY(-50%); pointer-events: none; color: ' + textColor + '; opacity: 0.5; }',
       '.lbe-cal { position: absolute; left: 0; top: calc(100% + 6px); width: 100%; background: ' + bg + '; border: 1.5px solid ' + border + '; border-radius: ' + radius + '; box-shadow: 0 8px 30px rgba(0,0,0,0.12); z-index: 9999; padding: 12px; display: none; min-width: 260px; }',
       '.lbe-cal.open { display: block; }',
       '.lbe-cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }',
