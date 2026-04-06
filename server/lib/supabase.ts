@@ -1,20 +1,19 @@
 import { createClient } from '@supabase/supabase-js'
 
 /**
- * Server-side Supabase client using the service role key.
- * This bypasses RLS — use only in trusted server routes.
- * Never expose the service key to the client.
+ * Server-side Supabase client.
+ * For use in trusted server routes only.
  */
 export function useSupabaseAdmin() {
   const config = useRuntimeConfig()
   const url = config.public.supabaseUrl
-  const serviceKey = config.supabaseServiceKey
+  const key = config.public.supabaseKey
 
-  if (!url || !serviceKey) {
-    throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_KEY in environment')
+  if (!url || !key) {
+    throw new Error('Missing SUPABASE_URL or SUPABASE_KEY in environment')
   }
 
-  return createClient(url, serviceKey, {
+  return createClient(url, key, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
@@ -35,7 +34,7 @@ export async function getAuthenticatedUser(event: any) {
   const token = authHeader.slice(7)
   const supabase = createClient(
     config.public.supabaseUrl!,
-    config.public.supabaseAnonKey!,
+    config.public.supabaseKey!,
   )
 
   const { data: { user }, error } = await supabase.auth.getUser(token)

@@ -1,17 +1,13 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2024-11-01',
+  compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
 
   future: {
     compatibilityVersion: 4,
   },
 
-  modules: [
-    '@nuxtjs/tailwindcss',
-    '@nuxtjs/supabase',
-    '@pinia/nuxt',
-  ],
+  modules: ["@nuxtjs/tailwindcss", "@nuxtjs/supabase", "@pinia/nuxt"],
 
   supabase: {
     // Supabase config loaded from runtime config / env
@@ -20,20 +16,19 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     // Private (server-side only)
-    supabaseServiceKey: process.env.SUPABASE_SERVICE_KEY,
     resendApiKey: process.env.RESEND_API_KEY,
-    emailFrom: process.env.EMAIL_FROM || 'noreply@localbookingengine.com',
-    appUrl: process.env.APP_URL || 'http://localhost:3000',
+    emailFrom: process.env.EMAIL_FROM || "noreply@localbookingengine.com",
+    appUrl: process.env.APP_URL || "http://localhost:3000",
 
     // Public (exposed to client)
     public: {
       supabaseUrl: process.env.SUPABASE_URL,
-      supabaseAnonKey: process.env.SUPABASE_ANON_KEY,
-      appUrl: process.env.APP_URL || 'http://localhost:3000',
+      supabaseKey: process.env.SUPABASE_KEY,
+      appUrl: process.env.APP_URL || "http://localhost:3000",
     },
   },
 
-  css: ['~/assets/css/main.css'],
+  css: ["~/assets/css/main.css"],
 
   typescript: {
     strict: true,
@@ -43,8 +38,8 @@ export default defineNuxtConfig({
   // Route rules
   routeRules: {
     // API routes - no SSR
-    '/api/**': { cors: true },
+    "/api/**": { cors: true },
     // Embed routes - public, no auth
-    '/embed/**': { ssr: false, cors: true },
+    "/embed/**": { ssr: false, cors: true },
   },
-})
+});
