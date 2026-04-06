@@ -96,60 +96,6 @@ const iconMap: Record<string, string> = {
 <template>
   <div class="lbe-site">
 
-    <style>
-      .lbe-site { font-family: 'Inter', system-ui, sans-serif; background: #ffffff; color: #111827; }
-      /* Aurora hero gradient */
-      .hero-bg {
-        background: linear-gradient(135deg, #0a0514 0%, #1a0a2e 25%, #16123f 50%, #0d1a3a 75%, #050d1a 100%);
-        position: relative;
-        overflow: hidden;
-      }
-      .aurora-1 {
-        position: absolute; width: 800px; height: 800px; border-radius: 50%;
-        background: radial-gradient(circle, #6172f355 0%, transparent 70%);
-        top: -200px; left: -100px;
-        animation: aurora-drift 12s ease-in-out infinite alternate;
-      }
-      .aurora-2 {
-        position: absolute; width: 600px; height: 600px; border-radius: 50%;
-        background: radial-gradient(circle, #8b5cf640 0%, transparent 70%);
-        top: 100px; right: -150px;
-        animation: aurora-drift 15s ease-in-out infinite alternate-reverse;
-      }
-      .aurora-3 {
-        position: absolute; width: 500px; height: 500px; border-radius: 50%;
-        background: radial-gradient(circle, #06b6d425 0%, transparent 70%);
-        bottom: -100px; left: 40%;
-        animation: aurora-drift 10s ease-in-out infinite alternate;
-      }
-      @keyframes aurora-drift {
-        0%   { transform: translate(0, 0) scale(1); }
-        100% { transform: translate(40px, 30px) scale(1.15); }
-      }
-      .gradient-text {
-        background: linear-gradient(135deg, #818cf8 0%, #a78bfa 50%, #67e8f9 100%);
-        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-      .glass-card {
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.1);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-      }
-      .card-glow:hover {
-        box-shadow: 0 0 0 1px #6172f360, 0 20px 60px -10px #6172f320;
-      }
-      .bento-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 20px; padding: 28px; transition: all 0.2s; }
-      .bento-card:hover { border-color: #a4bcfd; box-shadow: 0 8px 40px -8px #6172f315; transform: translateY(-2px); }
-      .step-num { font-size: 56px; font-weight: 900; line-height: 1; background: linear-gradient(135deg, #6172f3, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-      .pill-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: 0.03em; }
-      .hero-widget { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 24px; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
-      .cta-glow { box-shadow: 0 0 80px 20px #6172f340, inset 0 1px 0 rgba(255,255,255,0.1); }
-      .stat-value { font-size: 42px; font-weight: 900; background: linear-gradient(135deg, #6172f3, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.1; }
-      @media (prefers-reduced-motion: reduce) { .aurora-1, .aurora-2, .aurora-3 { animation: none; } }
-    </style>
-
     <!-- ── Navbar ─────────────────────────────────────────────────────────── -->
     <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-surface-100/80">
       <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -481,3 +427,56 @@ const iconMap: Record<string, string> = {
 
   </div>
 </template>
+
+<style>
+.lbe-site { font-family: 'Inter', system-ui, sans-serif; background: #ffffff; color: #111827; }
+.hero-bg {
+  background: linear-gradient(135deg, #0a0514 0%, #1a0a2e 25%, #16123f 50%, #0d1a3a 75%, #050d1a 100%);
+  position: relative;
+  overflow: hidden;
+}
+.aurora-1 {
+  position: absolute; width: 800px; height: 800px; border-radius: 50%;
+  background: radial-gradient(circle, #6172f355 0%, transparent 70%);
+  top: -200px; left: -100px;
+  animation: aurora-drift 12s ease-in-out infinite alternate;
+}
+.aurora-2 {
+  position: absolute; width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, #8b5cf640 0%, transparent 70%);
+  top: 100px; right: -150px;
+  animation: aurora-drift 15s ease-in-out infinite alternate-reverse;
+}
+.aurora-3 {
+  position: absolute; width: 500px; height: 500px; border-radius: 50%;
+  background: radial-gradient(circle, #06b6d425 0%, transparent 70%);
+  bottom: -100px; left: 40%;
+  animation: aurora-drift 10s ease-in-out infinite alternate;
+}
+@keyframes aurora-drift {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(40px, 30px) scale(1.15); }
+}
+.gradient-text {
+  background: linear-gradient(135deg, #818cf8 0%, #a78bfa 50%, #67e8f9 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.glass-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.card-glow:hover {
+  box-shadow: 0 0 0 1px #6172f360, 0 20px 60px -10px #6172f320;
+}
+.bento-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 20px; padding: 28px; transition: all 0.2s; }
+.bento-card:hover { border-color: #a4bcfd; box-shadow: 0 8px 40px -8px #6172f315; transform: translateY(-2px); }
+.step-num { font-size: 56px; font-weight: 900; line-height: 1; background: linear-gradient(135deg, #6172f3, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.pill-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: 0.03em; }
+.hero-widget { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 24px; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.cta-glow { box-shadow: 0 0 80px 20px #6172f340, inset 0 1px 0 rgba(255,255,255,0.1); }
+.stat-value { font-size: 42px; font-weight: 900; background: linear-gradient(135deg, #6172f3, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.1; }
+@media (prefers-reduced-motion: reduce) { .aurora-1, .aurora-2, .aurora-3 { animation: none; } }
+</style>
