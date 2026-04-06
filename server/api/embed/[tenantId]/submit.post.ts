@@ -28,12 +28,23 @@ export default defineEventHandler(async (event) => {
 
   const db = useSupabaseAdmin()
 
-  // Verify tenant is active
+  // Verify tenant is active + fetch email sending config
   const { data: tenant } = await db
     .from('tenants')
     .select('id, name, notification_email, status')
     .eq('id', tenantId)
     .single()
+
+  const { data: emailSettings } = await db
+    .from('tenant_settings')
+    .select('email_from_address, email_from_name, email_domain_status')
+    .eq('tenant_id', tenantId)
+    .single()
+
+  // Only use custom from address if the domain is verified
+  const customFrom = emailSettings?.email_domain_status === 'verified' && emailSettings.email_from_address
+    ? { address: emailSettings.email_from_address, name: emailSettings.email_from_name }
+    : undefined
 
   if (!tenant || tenant.status !== 'active') {
     throw createError({ statusCode: 404, message: 'Not found' })
@@ -88,7 +99,7 @@ export default defineEventHandler(async (event) => {
   })
 
   // Send emails (non-blocking)
-  sendEmbedEmails(tenantId, tenant, createdLead).catch(console.error)
+  sendEmbedEmails(tenantId, tenant, createdLead, customFrom).catch(console.error)
 
   // Return minimal confirmation — don't expose internal IDs to public
   return {
@@ -97,7 +108,7 @@ export default defineEventHandler(async (event) => {
   }
 })
 
-async function sendEmbedEmails(tenantId: string, tenant: any, lead: any) {
+async function sendEmbedEmails(tenantId: string, tenant: any, lead: any, customFrom?: { address: string; name?: string | null }) {
   const db = useSupabaseAdmin()
   const config = useRuntimeConfig()
   const vars = buildLeadEmailVars(lead, tenant.name, config.appUrl, lead.id)
@@ -115,7 +126,7 @@ async function sendEmbedEmails(tenantId: string, tenant: any, lead: any) {
     const subject = interpolateTemplate(confirmTemplate.subject, vars)
     const html = interpolateTemplate(confirmTemplate.body_html, vars)
     const text = interpolateTemplate(confirmTemplate.body_text, vars)
-    const result = await sendEmail({ to: lead.email, toName: lead.full_name, subject, html, text })
+    const result = await sendEmail({ to: lead.email, toName: lead.full_name, subject, html, text }, customFrom)
     await db.from('email_sends').insert({
       tenant_id: tenantId,
       lead_id: lead.id,
@@ -143,7 +154,7 @@ async function sendEmbedEmails(tenantId: string, tenant: any, lead: any) {
     const subject = interpolateTemplate(notifTemplate.subject, vars)
     const html = interpolateTemplate(notifTemplate.body_html, vars)
     const text = interpolateTemplate(notifTemplate.body_text, vars)
-    const result = await sendEmail({ to: tenant.notification_email, subject, html, text })
+    const result = await sendEmail({ to: tenant.notification_email, subject, html, text }, customFrom)
     await db.from('email_sends').insert({
       tenant_id: tenantId,
       lead_id: lead.id,

@@ -127,6 +127,7 @@ const openSection = ref<'content' | 'style' | 'services'>('content')
           { label: 'General',  href: '/settings' },
           { label: 'Embed',    href: '/settings/embed' },
           { label: 'Services', href: '/settings/services' },
+          { label: 'Email',    href: '/settings/email' },
           { label: 'Team',     href: '/settings/team' },
         ]"
         :key="tab.href"

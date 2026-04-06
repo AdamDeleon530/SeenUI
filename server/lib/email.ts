@@ -11,7 +11,10 @@
 
 import type { EmailPayload } from '~~/app/types/email'
 
-export async function sendEmail(payload: EmailPayload): Promise<{ id?: string; error?: string }> {
+export async function sendEmail(
+  payload: EmailPayload,
+  fromOverride?: { address: string; name?: string | null },
+): Promise<{ id?: string; error?: string }> {
   const config = useRuntimeConfig()
   const apiKey = config.resendApiKey
 
@@ -23,6 +26,16 @@ export async function sendEmail(payload: EmailPayload): Promise<{ id?: string; e
     return { id: 'dev-mock' }
   }
 
+  // Build from string: "Business Name <email@domain.com>" or plain address
+  let fromAddress: string
+  if (fromOverride?.address) {
+    fromAddress = fromOverride.name
+      ? `${fromOverride.name} <${fromOverride.address}>`
+      : fromOverride.address
+  } else {
+    fromAddress = config.emailFrom
+  }
+
   try {
     const response = await $fetch<{ id: string }>('https://api.resend.com/emails', {
       method: 'POST',
@@ -31,7 +44,7 @@ export async function sendEmail(payload: EmailPayload): Promise<{ id?: string; e
         'Content-Type': 'application/json',
       },
       body: {
-        from: config.emailFrom,
+        from: fromAddress,
         to: [payload.to],
         subject: payload.subject,
         html: payload.html,
