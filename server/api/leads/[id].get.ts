@@ -12,9 +12,8 @@ export default defineEventHandler(async (event) => {
     .select(`
       *,
       tags:lead_tags(tag:tags(*)),
-      assigned_user:assigned_to(id, full_name, email),
-      activities:lead_activities(*, user:user_id(id, full_name, email)),
-      notes:lead_notes(*, user:user_id(id, full_name, email))
+      activities:lead_activities(*),
+      notes:lead_notes(*)
     `)
     .eq('id', id!)
     .eq('tenant_id', tenantId) // enforces tenant isolation
