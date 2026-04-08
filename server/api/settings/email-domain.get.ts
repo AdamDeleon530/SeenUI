@@ -25,6 +25,15 @@ export default defineEventHandler(async (event) => {
       })
       dnsRecords = domain.records ?? []
       liveStatus = domain.status ?? null
+
+      // Auto-sync: if Resend says verified but DB is behind, update it now
+      if (liveStatus === 'verified' && settings.email_domain_status !== 'verified') {
+        await db
+          .from('tenant_settings')
+          .update({ email_domain_status: 'verified' })
+          .eq('tenant_id', tenantId)
+        settings.email_domain_status = 'verified'
+      }
     } catch {
       // Domain may have been deleted in Resend — that's OK
     }

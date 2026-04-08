@@ -38,12 +38,13 @@ export default defineEventHandler(async (event) => {
 
   const { data: emailSettings } = await db
     .from('tenant_settings')
-    .select('email_from_address, email_from_name, email_domain_status')
+    .select('email_from_address, email_from_name, email_domain_status, resend_domain_id')
     .eq('tenant_id', tenantId)
     .single()
 
-  // Only use custom from address if the domain is verified
-  const customFrom = emailSettings?.email_domain_status === 'verified' && emailSettings.email_from_address
+  // Use custom from address if domain is verified in DB or Resend (Resend rejects if not actually verified)
+  const customFrom = emailSettings?.email_from_address &&
+    (emailSettings.email_domain_status === 'verified' || emailSettings.resend_domain_id)
     ? { address: emailSettings.email_from_address, name: emailSettings.email_from_name }
     : undefined
 
