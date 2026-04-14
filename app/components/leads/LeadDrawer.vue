@@ -4,6 +4,7 @@ import AppDrawer from "../ui/AppDrawer.vue";
 import LeadStatusBadge from "./LeadStatusBadge.vue";
 import AppButton from "../ui/AppButton.vue";
 import TemplateTextarea from "../ui/TemplateTextarea.vue";
+import SmsThread from "./SmsThread.vue";
 
 interface Props {
   open: boolean;
@@ -36,6 +37,9 @@ const sendingEmail = ref(false);
 const emailSuccess = ref("");
 const emailError = ref("");
 
+// ── SMS state ─────────────────────────────────────────────────────────────────
+const smsPanelOpen = ref(false);
+
 // ── Enroll state ─────────────────────────────────────────────────────────────
 const enrollPanelOpen = ref(false);
 const sequences = ref<any[]>([]);
@@ -51,6 +55,7 @@ watch(
       loadingLead.value = true;
       emailPanelOpen.value = false;
       enrollPanelOpen.value = false;
+      smsPanelOpen.value = false;
       emailSuccess.value = "";
       emailError.value = "";
       enrollSuccess.value = "";
@@ -228,6 +233,7 @@ function getActivityIcon(type: string): string {
             @click="
               emailPanelOpen = !emailPanelOpen;
               enrollPanelOpen = false;
+              smsPanelOpen = false;
               emailSuccess = '';
               emailError = '';
             "
@@ -248,10 +254,35 @@ function getActivityIcon(type: string): string {
             Email
           </button>
           <button
+            v-if="fullLead?.phone"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-green-700 bg-green-50 hover:bg-green-100 transition-colors cursor-pointer"
+            @click="
+              smsPanelOpen = !smsPanelOpen;
+              emailPanelOpen = false;
+              enrollPanelOpen = false;
+            "
+          >
+            <svg
+              class="w-3.5 h-3.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-4 4v-4z"
+              />
+            </svg>
+            SMS
+          </button>
+          <button
             class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-purple-700 bg-purple-50 hover:bg-purple-100 transition-colors cursor-pointer"
             @click="
               enrollPanelOpen = !enrollPanelOpen;
               emailPanelOpen = false;
+              smsPanelOpen = false;
               enrollSuccess = '';
               enrollError = '';
             "
@@ -486,6 +517,24 @@ function getActivityIcon(type: string): string {
           >
             Cancel
           </button>
+        </div>
+      </div>
+
+      <!-- ── SMS panel ──────────────────────────────────────────────────────── -->
+      <div
+        v-if="smsPanelOpen && fullLead"
+        class="border-b border-green-100 bg-green-50"
+        style="height: 420px"
+      >
+        <div class="px-4 pt-3 pb-1">
+          <h3
+            class="text-xs font-semibold text-green-700 uppercase tracking-wider"
+          >
+            SMS · {{ fullLead.phone }}
+          </h3>
+        </div>
+        <div class="h-[380px]">
+          <SmsThread :lead-id="fullLead.id" />
         </div>
       </div>
 

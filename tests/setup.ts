@@ -50,6 +50,10 @@ globalThis.useRuntimeConfig = vi.fn(() => ({
 }))
 
 // ── Reset all mocks between tests ────────────────────────────────────────────
+// clearAllMocks resets call records only (not implementations), so vi.fn()
+// implementations created in vi.mock factories persist across tests within a
+// file. restoreAllMocks would clear those implementations, causing tests that
+// rely on hoisted module mocks to fail.
 afterEach(() => {
-  vi.restoreAllMocks()
+  vi.clearAllMocks()
 })

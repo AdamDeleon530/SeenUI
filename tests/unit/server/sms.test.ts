@@ -28,32 +28,25 @@ describe('TASK 1: server/lib/twilio.ts', () => {
   })
 
   it('sendSms throws if TWILIO_ACCOUNT_SID is not configured', async () => {
-    const mod = await import('../../../server/lib/twilio').catch(() => null)
-    if (!mod) return
+    // Use the real implementation (not the hoisted mock) to test credential validation
+    const actual = await vi.importActual<typeof import('../../../server/lib/twilio')>('../../../server/lib/twilio')
 
-    // Override runtime config to simulate missing creds
     vi.mocked(globalThis.useRuntimeConfig).mockReturnValueOnce({
       ...globalThis.useRuntimeConfig(),
       twilio: { accountSid: '', authToken: '', phoneNumber: '' },
     } as any)
 
-    await expect(mod.sendSms('+15551234567', 'Hello')).rejects.toThrow(/twilio/i)
+    await expect(actual.sendSms('+15551234567', 'Hello')).rejects.toThrow(/twilio/i)
   })
 
   it('sendSms returns a result object with sid and status', async () => {
-    const mod = await import('../../../server/lib/twilio').catch(() => null)
-    if (!mod) return
+    // The twilio module is mocked (hoisted from the webhook test below).
+    // Configure the mocked sendSms to return the expected shape for this call.
+    const { sendSms } = await import('../../../server/lib/twilio').catch(() => null) as any
+    if (!sendSms) return
 
-    // Mock the Twilio client to avoid real API calls
-    vi.mock('../../../server/lib/twilio', async (importOriginal) => {
-      const actual = await importOriginal() as any
-      return {
-        ...actual,
-        sendSms: vi.fn().mockResolvedValue({ sid: 'SMtest123', status: 'queued', error: null }),
-      }
-    })
+    vi.mocked(sendSms).mockResolvedValueOnce({ sid: 'SMtest123', status: 'queued', error: null })
 
-    const { sendSms } = await import('../../../server/lib/twilio')
     const result = await sendSms('+15551234567', 'Test message')
     expect(result).toHaveProperty('sid')
     expect(result).toHaveProperty('status')
@@ -156,8 +149,12 @@ describe('TASK 1: GET /api/sms/:leadId/messages', () => {
   })
 
   it('rejects unauthenticated access (no valid token)', async () => {
-    const { serverSupabaseUser } = await import('#supabase/server')
-    vi.mocked(serverSupabaseUser).mockResolvedValueOnce(null)
+    // requireTenantContext is mocked (hoisted from the plan-trial test).
+    // Override for this call to simulate an unauthenticated request.
+    const tenantUtils = await import('../../../server/utils/tenant')
+    vi.mocked(tenantUtils.requireTenantContext).mockRejectedValueOnce(
+      Object.assign(new Error('Unauthorized'), { statusCode: 401 }),
+    )
 
     const mod = await import('../../../server/api/sms/[leadId]/messages.get').catch(() => null)
     if (!mod) return

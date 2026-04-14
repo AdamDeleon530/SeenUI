@@ -30,6 +30,11 @@ export default defineNuxtConfig({
       agency_monthly:  process.env.STRIPE_PRICE_AGENCY_MONTHLY,
       agency_annual:   process.env.STRIPE_PRICE_AGENCY_ANNUAL,
     },
+    twilio: {
+      accountSid:  process.env.TWILIO_ACCOUNT_SID  || '',
+      authToken:   process.env.TWILIO_AUTH_TOKEN   || '',
+      phoneNumber: process.env.TWILIO_PHONE_NUMBER || '',
+    },
 
     // Public (exposed to client)
     public: {
