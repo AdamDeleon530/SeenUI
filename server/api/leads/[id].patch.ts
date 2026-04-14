@@ -1,6 +1,6 @@
 import { requireTenantContext } from '../../utils/tenant'
 import { useSupabaseAdmin } from '../../lib/supabase'
-import { sendEmail, interpolateTemplate, buildLeadEmailVars } from '../../lib/email'
+import { sendEmail, interpolateTemplate, buildLeadEmailVars, getTenantReviewUrl } from '../../lib/email'
 import type { UpdateLeadDto } from '~~/app/types/lead'
 
 // PATCH /api/leads/:id — update a lead's fields or status
@@ -64,13 +64,12 @@ async function triggerStatusChangeEmails(tenantId: string, lead: any, newStatus:
 
   if (!template) return
 
-  const { data: tenant } = await db
-    .from('tenants')
-    .select('name')
-    .eq('id', tenantId)
-    .single()
+  const [tenantRes, reviewUrl] = await Promise.all([
+    db.from('tenants').select('name').eq('id', tenantId).single(),
+    getTenantReviewUrl(tenantId),
+  ])
 
-  const vars = buildLeadEmailVars(lead, tenant?.name ?? '', config.appUrl, lead.id)
+  const vars = buildLeadEmailVars(lead, tenantRes.data?.name ?? '', config.appUrl, lead.id, reviewUrl)
   const subject = interpolateTemplate(template.subject, vars)
   const html = interpolateTemplate(template.body_html, vars)
   const text = interpolateTemplate(template.body_text, vars)

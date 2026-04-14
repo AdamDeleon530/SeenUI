@@ -1,6 +1,6 @@
 import { requireTenantContext } from '../../utils/tenant'
 import { useSupabaseAdmin } from '../../lib/supabase'
-import { sendEmail, interpolateTemplate, buildLeadEmailVars } from '../../lib/email'
+import { sendEmail, interpolateTemplate, buildLeadEmailVars, getTenantReviewUrl } from '../../lib/email'
 import type { CreateLeadDto } from '~~/app/types/lead'
 
 // POST /api/leads — create a new lead (authenticated staff/owner)
@@ -69,7 +69,7 @@ async function sendLeadNotificationEmail(tenantId: string, lead: any) {
   const db = useSupabaseAdmin()
   const config = useRuntimeConfig()
 
-  const [tenantRes, templateRes] = await Promise.all([
+  const [tenantRes, templateRes, reviewUrl] = await Promise.all([
     db.from('tenants').select('name, notification_email').eq('id', tenantId).single(),
     db.from('email_templates')
       .select('*')
@@ -77,11 +77,12 @@ async function sendLeadNotificationEmail(tenantId: string, lead: any) {
       .eq('type', 'lead_notification')
       .eq('is_enabled', true)
       .single(),
+    getTenantReviewUrl(tenantId),
   ])
 
   if (!tenantRes.data?.notification_email || !templateRes.data) return
 
-  const vars = buildLeadEmailVars(lead, tenantRes.data.name, config.appUrl, lead.id)
+  const vars = buildLeadEmailVars(lead, tenantRes.data.name, config.appUrl, lead.id, reviewUrl)
   const subject = interpolateTemplate(templateRes.data.subject, vars)
   const html = interpolateTemplate(templateRes.data.body_html, vars)
   const text = interpolateTemplate(templateRes.data.body_text, vars)

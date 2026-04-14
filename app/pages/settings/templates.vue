@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import AppButton from '~/components/ui/AppButton.vue'
 import AppCard from '~/components/ui/AppCard.vue'
+import TemplateTextarea from '~/components/ui/TemplateTextarea.vue'
 
 definePageMeta({ middleware: ['auth', 'tenant'] })
 
@@ -305,12 +306,12 @@ function formatDate(d: string) {
                   class="w-full min-h-40 p-4 text-sm border border-surface-200 rounded-xl bg-white prose prose-sm max-w-none"
                   v-html="form.body_html"
                 />
-                <textarea
+                <TemplateTextarea
                   v-else
                   v-model="form.body_html"
-                  rows="10"
-                  class="w-full px-3 py-2 text-xs font-mono rounded-xl border border-surface-300 focus:outline-none focus:ring-2 focus:ring-brand-500 resize-y"
-                  placeholder="<p>Hi {{first_name}},</p>..."
+                  :rows="10"
+                  placeholder="<p>Hi {{first_name}},</p>... (type {{ to see variables)"
+                  :mono="true"
                 />
               </div>
 
@@ -320,11 +321,10 @@ function formatDate(d: string) {
                   Plain text fallback
                   <span class="text-surface-400 font-normal ml-1">(shown in email clients that don't render HTML)</span>
                 </label>
-                <textarea
+                <TemplateTextarea
                   v-model="form.body_text"
-                  rows="4"
-                  class="w-full px-3 py-2 text-xs rounded-xl border border-surface-300 focus:outline-none focus:ring-2 focus:ring-brand-500 resize-y"
-                  placeholder="Hi {{first_name}}, ..."
+                  :rows="4"
+                  placeholder="Hi {{first_name}}, ... (type {{ to see variables)"
                 />
               </div>
             </div>

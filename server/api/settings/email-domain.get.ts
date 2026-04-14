@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
 
   const { data: settings } = await db
     .from('tenant_settings')
-    .select('email_from_name, email_from_address, resend_domain_id, email_domain_status')
+    .select('email_from_name, email_from_address, resend_domain_id, email_domain_status, review_url')
     .eq('tenant_id', tenantId)
     .single()
 

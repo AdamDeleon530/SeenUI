@@ -8,9 +8,10 @@ const tenantStore = useTenantStore()
 const { signOut } = useAuth()
 
 const navItems = [
-  { label: 'Dashboard', href: '/dashboard', icon: 'grid' },
-  { label: 'Pipeline',  href: '/leads',     icon: 'kanban' },
-  { label: 'Settings',  href: '/settings',  icon: 'settings' },
+  { label: 'Dashboard', href: '/dashboard',           icon: 'grid' },
+  { label: 'Pipeline',  href: '/leads',               icon: 'kanban' },
+  { label: 'Sequences', href: '/sequences',  icon: 'sequences' },
+  { label: 'Settings',  href: '/settings',            icon: 'settings' },
 ]
 
 const agencyItems = [
@@ -92,6 +93,10 @@ watch(() => route.path, () => emit('close'))
         <!-- Pipeline -->
         <svg v-else-if="item.icon === 'kanban'" class="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+        </svg>
+        <!-- Sequences -->
+        <svg v-else-if="item.icon === 'sequences'" class="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
         </svg>
         <!-- Settings -->
         <svg v-else-if="item.icon === 'settings'" class="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

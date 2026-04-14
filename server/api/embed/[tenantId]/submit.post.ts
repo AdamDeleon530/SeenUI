@@ -1,5 +1,5 @@
 import { useSupabaseAdmin } from '../../../lib/supabase'
-import { sendEmail, interpolateTemplate, buildLeadEmailVars } from '../../../lib/email'
+import { sendEmail, interpolateTemplate, buildLeadEmailVars, getTenantReviewUrl } from '../../../lib/email'
 import { PLAN_LIMITS } from '../../../lib/stripe'
 import type { CreateLeadDto } from '~~/app/types/lead'
 
@@ -136,7 +136,8 @@ export default defineEventHandler(async (event) => {
 async function sendEmbedEmails(tenantId: string, tenant: any, lead: any, customFrom?: { address: string; name?: string | null }) {
   const db = useSupabaseAdmin()
   const config = useRuntimeConfig()
-  const vars = buildLeadEmailVars(lead, tenant.name, config.appUrl, lead.id)
+  const reviewUrl = await getTenantReviewUrl(tenantId)
+  const vars = buildLeadEmailVars(lead, tenant.name, config.appUrl, lead.id, reviewUrl)
 
   // 1. Confirmation to the lead
   const { data: confirmTemplate } = await db

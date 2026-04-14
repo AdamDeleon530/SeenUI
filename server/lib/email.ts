@@ -60,6 +60,21 @@ export async function sendEmail(
 }
 
 /**
+ * Fetches the review_url for a tenant from tenant_settings.
+ * Returns empty string if not configured.
+ */
+export async function getTenantReviewUrl(tenantId: string): Promise<string> {
+  const { useSupabaseAdmin } = await import('./supabase')
+  const db = useSupabaseAdmin()
+  const { data } = await db
+    .from('tenant_settings')
+    .select('review_url')
+    .eq('tenant_id', tenantId)
+    .single()
+  return data?.review_url ?? ''
+}
+
+/**
  * Interpolates template variables into email content.
  * Variables use {{variable_name}} syntax.
  */
@@ -76,7 +91,7 @@ export function buildLeadEmailVars(lead: {
   phone?: string | null
   requested_service?: string | null
   preferred_date?: string | null
-}, tenantName: string, appUrl: string, leadId?: string): Record<string, string | null | undefined> {
+}, tenantName: string, appUrl: string, leadId?: string, reviewUrl?: string | null): Record<string, string | null | undefined> {
   const firstName = lead.full_name.split(' ')[0]
   return {
     first_name: firstName,
@@ -87,6 +102,6 @@ export function buildLeadEmailVars(lead: {
     preferred_date: lead.preferred_date ?? 'Flexible',
     business_name: tenantName,
     lead_url: leadId ? `${appUrl}/leads/${leadId}` : appUrl,
-    review_url: '', // Populated per-tenant via settings in the future
+    review_url: reviewUrl ?? '',
   }
 }

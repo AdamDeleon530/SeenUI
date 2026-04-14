@@ -20,6 +20,35 @@ const saving = ref(false)
 const saved = ref(false)
 const error = ref('')
 
+// ── Review URL (from tenant_settings) ─────────────────────────────────────
+const reviewUrl     = ref('')
+const savingReview  = ref(false)
+const savedReview   = ref(false)
+const errorReview   = ref('')
+
+onMounted(async () => {
+  const data = await $fetch<{ settings: { review_url?: string | null } }>('/api/settings/email-domain')
+    .catch(() => null)
+  reviewUrl.value = data?.settings?.review_url ?? ''
+})
+
+async function saveReviewUrl() {
+  errorReview.value = ''
+  savingReview.value = true
+  try {
+    await $fetch('/api/settings/review-url', {
+      method: 'PATCH',
+      body: { review_url: reviewUrl.value.trim() || null },
+    })
+    savedReview.value = true
+    setTimeout(() => { savedReview.value = false }, 2500)
+  } catch (e: any) {
+    errorReview.value = e?.data?.message ?? 'Failed to save'
+  } finally {
+    savingReview.value = false
+  }
+}
+
 watch(() => tenantStore.tenant, (t) => {
   if (t) {
     form.name = t.name
@@ -123,6 +152,31 @@ const timezones = [
           </Transition>
         </div>
       </form>
+    </AppCard>
+
+    <!-- Review URL -->
+    <AppCard>
+      <h2 class="text-sm font-semibold text-surface-900 mb-1">Review Link</h2>
+      <p class="text-xs text-surface-500 mb-4">
+        Used as <code class="bg-surface-100 px-1 py-0.5 rounded text-[11px]">&#123;&#123;review_url&#125;&#125;</code> in email templates.
+        Paste your Google, Yelp, or any other review page URL here.
+      </p>
+      <div class="space-y-4">
+        <AppInput
+          v-model="reviewUrl"
+          label="Review Page URL"
+          placeholder="https://g.page/r/your-business/review"
+          hint="Google review links start with g.page/r/… — find yours in Google Business Profile"
+          type="url"
+        />
+        <div v-if="errorReview" class="text-sm text-danger-600">{{ errorReview }}</div>
+        <div class="flex items-center gap-3">
+          <AppButton :loading="savingReview" @click="saveReviewUrl">Save</AppButton>
+          <Transition enter-active-class="transition-opacity duration-200" leave-active-class="transition-opacity duration-200" enter-from-class="opacity-0" leave-to-class="opacity-0">
+            <span v-if="savedReview" class="text-sm text-success-600 font-medium">Saved!</span>
+          </Transition>
+        </div>
+      </div>
     </AppCard>
   </div>
 </template>
