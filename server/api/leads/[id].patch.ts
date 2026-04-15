@@ -1,6 +1,7 @@
 import { requireTenantContext } from '../../utils/tenant'
 import { useSupabaseAdmin } from '../../lib/supabase'
 import { sendEmail, interpolateTemplate, buildLeadEmailVars, getTenantReviewUrl } from '../../lib/email'
+import { scheduleReviewRequest } from '../../lib/review-requests'
 import type { UpdateLeadDto } from '~~/app/types/lead'
 
 // PATCH /api/leads/:id — update a lead's fields or status
@@ -44,6 +45,11 @@ export default defineEventHandler(async (event) => {
 
     // Trigger email workflows for status changes (non-blocking)
     triggerStatusChangeEmails(tenantId, updated, body.status).catch(console.error)
+
+    // Schedule review request when a lead is won (non-blocking)
+    if (body.status === 'won') {
+      scheduleReviewRequest(tenantId, updated).catch(console.error)
+    }
   }
 
   return updated

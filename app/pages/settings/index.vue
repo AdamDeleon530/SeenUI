@@ -20,16 +20,20 @@ const saving = ref(false)
 const saved = ref(false)
 const error = ref('')
 
-// ── Review URL (from tenant_settings) ─────────────────────────────────────
-const reviewUrl     = ref('')
-const savingReview  = ref(false)
-const savedReview   = ref(false)
-const errorReview   = ref('')
+// ── Review URL + review request config (from tenant_settings) ─────────────
+const reviewUrl              = ref('')
+const reviewDelayHours       = ref(24)
+const reviewSmsEnabled       = ref(false)
+const savingReview           = ref(false)
+const savedReview            = ref(false)
+const errorReview            = ref('')
 
 onMounted(async () => {
-  const data = await $fetch<{ settings: { review_url?: string | null } }>('/api/settings/email-domain')
+  const data = await $fetch<{ settings: { review_url?: string | null; review_request_delay_hours?: number; review_request_sms_enabled?: boolean } }>('/api/settings/email-domain')
     .catch(() => null)
-  reviewUrl.value = data?.settings?.review_url ?? ''
+  reviewUrl.value        = data?.settings?.review_url ?? ''
+  reviewDelayHours.value = data?.settings?.review_request_delay_hours ?? 24
+  reviewSmsEnabled.value = data?.settings?.review_request_sms_enabled ?? false
 })
 
 async function saveReviewUrl() {
@@ -38,7 +42,11 @@ async function saveReviewUrl() {
   try {
     await $fetch('/api/settings/review-url', {
       method: 'PATCH',
-      body: { review_url: reviewUrl.value.trim() || null },
+      body: {
+        review_url: reviewUrl.value.trim() || null,
+        review_request_delay_hours: reviewDelayHours.value,
+        review_request_sms_enabled: reviewSmsEnabled.value,
+      },
     })
     savedReview.value = true
     setTimeout(() => { savedReview.value = false }, 2500)
@@ -169,6 +177,27 @@ const timezones = [
           hint="Google review links start with g.page/r/… — find yours in Google Business Profile"
           type="url"
         />
+        <AppSelect
+          v-model="reviewDelayHours"
+          label="Send Delay"
+          hint="How long after a lead is marked Won to send the review request"
+          :options="[
+            { value: 0,  label: 'Immediately' },
+            { value: 1,  label: '1 hour later' },
+            { value: 4,  label: '4 hours later' },
+            { value: 24, label: '24 hours later (recommended)' },
+            { value: 48, label: '48 hours later' },
+            { value: 72, label: '3 days later' },
+          ]"
+        />
+        <label class="flex items-center gap-3 cursor-pointer select-none">
+          <input
+            v-model="reviewSmsEnabled"
+            type="checkbox"
+            class="w-4 h-4 rounded accent-brand-500"
+          />
+          <span class="text-sm text-surface-700">Also send review request via SMS (Starter plan+)</span>
+        </label>
         <div v-if="errorReview" class="text-sm text-danger-600">{{ errorReview }}</div>
         <div class="flex items-center gap-3">
           <AppButton :loading="savingReview" @click="saveReviewUrl">Save</AppButton>

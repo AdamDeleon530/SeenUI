@@ -21,11 +21,11 @@ const mockSelect = vi.fn().mockReturnThis()
 const mockEq = vi.fn().mockReturnThis()
 const mockFrom = vi.fn()
 
-vi.mock('../../../server/lib/supabase', () => ({
+vi.mock('../../server/lib/supabase', () => ({
   useSupabaseAdmin: vi.fn(() => ({ from: mockFrom })),
 }))
 
-vi.mock('../../../server/lib/email', () => ({
+vi.mock('../../server/lib/email', () => ({
   sendEmail: vi.fn().mockResolvedValue({ id: 'email-1' }),
   interpolateTemplate: vi.fn((t: string) => t),
   buildLeadEmailVars: vi.fn(() => ({})),
@@ -159,12 +159,12 @@ describe('POST /api/embed/:tenantId/submit', () => {
   })
 
   it('handler file exports a function', async () => {
-    const mod = await import('../../../server/api/embed/[tenantId]/submit.post')
+    const mod = await import('../../server/api/embed/[tenantId]/submit.post')
     expect(typeof mod.default).toBe('function')
   })
 
   it('validates that full_name is required', async () => {
-    const { default: handler } = await import('../../../server/api/embed/[tenantId]/submit.post')
+    const { default: handler } = await import('../../server/api/embed/[tenantId]/submit.post')
     vi.mocked(globalThis.getRouterParam).mockReturnValue('tenant-1')
     vi.mocked(globalThis.readBody).mockResolvedValue({ email: 'jane@test.com' })
 
@@ -172,7 +172,7 @@ describe('POST /api/embed/:tenantId/submit', () => {
   })
 
   it('validates that email is required', async () => {
-    const { default: handler } = await import('../../../server/api/embed/[tenantId]/submit.post')
+    const { default: handler } = await import('../../server/api/embed/[tenantId]/submit.post')
     vi.mocked(globalThis.getRouterParam).mockReturnValue('tenant-1')
     vi.mocked(globalThis.readBody).mockResolvedValue({ full_name: 'Jane Smith' })
 
@@ -180,7 +180,7 @@ describe('POST /api/embed/:tenantId/submit', () => {
   })
 
   it('validates email format', async () => {
-    const { default: handler } = await import('../../../server/api/embed/[tenantId]/submit.post')
+    const { default: handler } = await import('../../server/api/embed/[tenantId]/submit.post')
     vi.mocked(globalThis.getRouterParam).mockReturnValue('tenant-1')
     vi.mocked(globalThis.readBody).mockResolvedValue({ full_name: 'Jane', email: 'not-an-email' })
 
@@ -189,7 +189,7 @@ describe('POST /api/embed/:tenantId/submit', () => {
 
   it('returns 404 for inactive/suspended tenant', async () => {
     setupMockDb({ tenantActive: false })
-    const { default: handler } = await import('../../../server/api/embed/[tenantId]/submit.post')
+    const { default: handler } = await import('../../server/api/embed/[tenantId]/submit.post')
     vi.mocked(globalThis.getRouterParam).mockReturnValue('tenant-inactive')
     vi.mocked(globalThis.readBody).mockResolvedValue({ full_name: 'Jane', email: 'jane@test.com' })
 
@@ -198,7 +198,7 @@ describe('POST /api/embed/:tenantId/submit', () => {
 
   it('returns 429 when trial lead limit is exceeded', async () => {
     setupMockDb({ plan: 'trial', leadCount: 26 })
-    const { default: handler } = await import('../../../server/api/embed/[tenantId]/submit.post')
+    const { default: handler } = await import('../../server/api/embed/[tenantId]/submit.post')
     vi.mocked(globalThis.getRouterParam).mockReturnValue('tenant-1')
     vi.mocked(globalThis.readBody).mockResolvedValue({ full_name: 'Jane', email: 'jane@test.com' })
 
@@ -206,7 +206,7 @@ describe('POST /api/embed/:tenantId/submit', () => {
   })
 
   it('returns success message on valid submission', async () => {
-    const { default: handler } = await import('../../../server/api/embed/[tenantId]/submit.post')
+    const { default: handler } = await import('../../server/api/embed/[tenantId]/submit.post')
     vi.mocked(globalThis.getRouterParam).mockReturnValue('tenant-1')
     vi.mocked(globalThis.readBody).mockResolvedValue({ full_name: 'Jane Smith', email: 'jane@test.com' })
 
@@ -216,7 +216,7 @@ describe('POST /api/embed/:tenantId/submit', () => {
   })
 
   it('does not expose internal lead ID in response', async () => {
-    const { default: handler } = await import('../../../server/api/embed/[tenantId]/submit.post')
+    const { default: handler } = await import('../../server/api/embed/[tenantId]/submit.post')
     vi.mocked(globalThis.getRouterParam).mockReturnValue('tenant-1')
     vi.mocked(globalThis.readBody).mockResolvedValue({ full_name: 'Jane Smith', email: 'jane@test.com' })
 

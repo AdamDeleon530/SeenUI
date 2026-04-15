@@ -11,11 +11,11 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-vi.mock('../../../server/utils/tenant', () => ({
+vi.mock('../../server/utils/tenant', () => ({
   requireTenantContext: vi.fn().mockResolvedValue({ userId: 'user-1', tenantId: 'tenant-1' }),
 }))
 
-vi.mock('../../../server/lib/email', () => ({
+vi.mock('../../server/lib/email', () => ({
   sendEmail: vi.fn().mockResolvedValue({ id: 'email-1' }),
   interpolateTemplate: vi.fn((t: string) => t),
   buildLeadEmailVars: vi.fn(() => ({ first_name: 'Jane' })),
@@ -29,7 +29,7 @@ const mockSingleChain = vi.fn()
 const mockInsertChain = vi.fn().mockResolvedValue({ error: null })
 const mockFromFn = vi.fn()
 
-vi.mock('../../../server/lib/supabase', () => ({
+vi.mock('../../server/lib/supabase', () => ({
   useSupabaseAdmin: vi.fn(() => ({ from: mockFromFn })),
 }))
 
@@ -112,12 +112,12 @@ describe('POST /api/sequences/:id/enroll', () => {
   })
 
   it('handler exports a function', async () => {
-    const mod = await import('../../../server/api/sequences/[id]/enroll.post')
+    const mod = await import('../../server/api/sequences/[id]/enroll.post')
     expect(typeof mod.default).toBe('function')
   })
 
   it('rejects missing lead_id with 400', async () => {
-    const { default: handler } = await import('../../../server/api/sequences/[id]/enroll.post')
+    const { default: handler } = await import('../../server/api/sequences/[id]/enroll.post')
     vi.mocked(globalThis.getRouterParam).mockReturnValue('seq-1')
     vi.mocked(globalThis.readBody).mockResolvedValue({}) // no lead_id
 
@@ -126,7 +126,7 @@ describe('POST /api/sequences/:id/enroll', () => {
 
   it('returns 404 when sequence not found', async () => {
     setupSequenceDb({ sequenceExists: false })
-    const { default: handler } = await import('../../../server/api/sequences/[id]/enroll.post')
+    const { default: handler } = await import('../../server/api/sequences/[id]/enroll.post')
     vi.mocked(globalThis.getRouterParam).mockReturnValue('nonexistent')
     vi.mocked(globalThis.readBody).mockResolvedValue({ lead_id: 'lead-1' })
 
@@ -135,7 +135,7 @@ describe('POST /api/sequences/:id/enroll', () => {
 
   it('returns 400 when sequence is not active', async () => {
     setupSequenceDb({ sequenceActive: false })
-    const { default: handler } = await import('../../../server/api/sequences/[id]/enroll.post')
+    const { default: handler } = await import('../../server/api/sequences/[id]/enroll.post')
     vi.mocked(globalThis.getRouterParam).mockReturnValue('seq-1')
     vi.mocked(globalThis.readBody).mockResolvedValue({ lead_id: 'lead-1' })
 
@@ -144,7 +144,7 @@ describe('POST /api/sequences/:id/enroll', () => {
 
   it('returns 404 when lead not found', async () => {
     setupSequenceDb({ leadExists: false })
-    const { default: handler } = await import('../../../server/api/sequences/[id]/enroll.post')
+    const { default: handler } = await import('../../server/api/sequences/[id]/enroll.post')
     vi.mocked(globalThis.getRouterParam).mockReturnValue('seq-1')
     vi.mocked(globalThis.readBody).mockResolvedValue({ lead_id: 'lead-ghost' })
 
@@ -152,7 +152,7 @@ describe('POST /api/sequences/:id/enroll', () => {
   })
 
   it('returns ok:true and enrollment_id on success', async () => {
-    const { default: handler } = await import('../../../server/api/sequences/[id]/enroll.post')
+    const { default: handler } = await import('../../server/api/sequences/[id]/enroll.post')
     vi.mocked(globalThis.getRouterParam).mockReturnValue('seq-1')
     vi.mocked(globalThis.readBody).mockResolvedValue({ lead_id: 'lead-1' })
 
@@ -164,7 +164,7 @@ describe('POST /api/sequences/:id/enroll', () => {
     setupSequenceDb({
       steps: [{ id: 'step-1', step_order: 0, delay_days: 3, subject: 'Hi', body_html: '<p>Hi</p>' }]
     })
-    const { default: handler } = await import('../../../server/api/sequences/[id]/enroll.post')
+    const { default: handler } = await import('../../server/api/sequences/[id]/enroll.post')
     vi.mocked(globalThis.getRouterParam).mockReturnValue('seq-1')
     vi.mocked(globalThis.readBody).mockResolvedValue({ lead_id: 'lead-1' })
 
@@ -181,12 +181,12 @@ describe('POST /api/sequences/:id/enroll', () => {
   })
 
   it('sends email immediately when first step has delay_days = 0', async () => {
-    const { sendEmail } = await import('../../../server/lib/email')
+    const { sendEmail } = await import('../../server/lib/email')
     setupSequenceDb({
       steps: [{ id: 'step-1', step_order: 0, delay_days: 0, subject: 'Welcome!', body_html: '<p>Welcome</p>', body_text: 'Welcome' }]
     })
 
-    const { default: handler } = await import('../../../server/api/sequences/[id]/enroll.post')
+    const { default: handler } = await import('../../server/api/sequences/[id]/enroll.post')
     vi.mocked(globalThis.getRouterParam).mockReturnValue('seq-1')
     vi.mocked(globalThis.readBody).mockResolvedValue({ lead_id: 'lead-1' })
 

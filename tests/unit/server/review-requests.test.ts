@@ -10,6 +10,19 @@
 
 import { describe, it, expect, vi } from 'vitest'
 
+// vi.mock is hoisted to module scope, so the factory cannot reference variables
+// defined inside it() bodies. Use vi.hoisted() to create a shareable spy that
+// is initialised before any imports resolve.
+const { sendEmailMock } = vi.hoisted(() => ({
+  sendEmailMock: vi.fn().mockResolvedValue({ id: 'email-1' }),
+}))
+
+vi.mock('../../../server/lib/email', () => ({
+  sendEmail: sendEmailMock,
+  interpolateTemplate: (t: string) => t,
+  buildLeadEmailVars: () => ({}),
+}))
+
 // ── scheduleReviewRequest helper ──────────────────────────────────────────────
 
 describe('TASK 2: scheduleReviewRequest', () => {
@@ -50,13 +63,6 @@ describe('TASK 2: scheduleReviewRequest', () => {
   it('sends immediately when review_request_delay_hours is 0', async () => {
     const mod = await import('../../../server/lib/review-requests').catch(() => null)
     if (!mod) return
-
-    const sendEmailMock = vi.fn().mockResolvedValue({ id: 'email-1' })
-    vi.mock('../../../server/lib/email', () => ({
-      sendEmail: sendEmailMock,
-      interpolateTemplate: (t: string) => t,
-      buildLeadEmailVars: () => ({}),
-    }))
 
     const fakeDb = {
       from: vi.fn(() => ({
